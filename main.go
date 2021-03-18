@@ -11,6 +11,11 @@ import (
 
 var orgToNuke = flag.String("orgToNuke", "", "the name of the organization you want to stop receiving notifications from")
 
+type shortRepo struct {
+	owner string
+	name string
+}
+
 func main() {
 	flag.Parse()
 	if len(*orgToNuke) == 0 {
@@ -26,6 +31,8 @@ func main() {
 
 	client := github.NewClient(tc)
 
+	var unwatchQueue []shortRepo
+
 	for pg := 1; ; pg++ {
 		repos, _, err := client.Activity.ListWatched(ctx, "", &github.ListOptions{Page: pg, PerPage: 100})
 
@@ -37,15 +44,18 @@ func main() {
 			break
 		}
 		for _, r := range repos {
-			owner := r.GetOwner().GetLogin()
-			repoName := r.GetName()
-			if owner == *orgToNuke {
-				log.Printf("unwatching %s/%s", owner, repoName)
-				_, err := client.Activity.DeleteRepositorySubscription(ctx, owner, repoName)
-				if err != nil {
-					log.Fatal(err)
-				}
+			sr := shortRepo{owner: r.GetOwner().GetLogin(), name: r.GetName()}
+			if sr.owner == *orgToNuke {
+				unwatchQueue = append(unwatchQueue, sr)
+				log.Printf("queuing %+v to unwatch", sr)
 			}
+		}
+	}
+	for _, sr := range unwatchQueue {
+		log.Printf("unwatching %+v...", sr)
+		_, err := client.Activity.DeleteRepositorySubscription(ctx, sr.owner, sr.name)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 	log.Print("done!")
