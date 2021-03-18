@@ -9,7 +9,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-var orgToNuke = flag.String("orgToNuke", "", "the name of the organization you want to stop receiving notifications from")
+var org = flag.String("org", "", "the name of the organization you want to stop receiving notifications from")
 
 type shortRepo struct {
 	owner string
@@ -18,11 +18,11 @@ type shortRepo struct {
 
 func main() {
 	flag.Parse()
-	if len(*orgToNuke) == 0 {
+	if len(*org) == 0 {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
-	log.Printf("we will get rid of notifications from %s", *orgToNuke)
+	log.Printf("we will get rid of notifications from %s", *org)
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: os.Getenv("GHACCESSTOKEN")},
@@ -45,7 +45,7 @@ func main() {
 		}
 		for _, r := range repos {
 			sr := shortRepo{owner: r.GetOwner().GetLogin(), name: r.GetName()}
-			if sr.owner == *orgToNuke {
+			if sr.owner == *org {
 				unwatchQueue = append(unwatchQueue, sr)
 				log.Printf("queuing %+v to unwatch", sr)
 			}
