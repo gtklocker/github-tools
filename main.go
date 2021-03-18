@@ -29,23 +29,23 @@ func main() {
 	for pg := 1; ; pg++ {
 		repos, _, err := client.Activity.ListWatched(ctx, "", &github.ListOptions{Page: pg, PerPage: 100})
 
-		if err == nil {
-			if len(repos) == 0 {
-				break
-			}
-			for _, r := range repos {
-				owner := r.GetOwner().GetLogin()
-				repoName := r.GetName()
-				if owner == *orgToNuke {
-					log.Printf("unwatching %s/%s", owner, repoName)
-					_, err := client.Activity.DeleteRepositorySubscription(ctx, owner, repoName)
-					if err != nil {
-						log.Fatal(err)
-					}
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if len(repos) == 0 {
+			break
+		}
+		for _, r := range repos {
+			owner := r.GetOwner().GetLogin()
+			repoName := r.GetName()
+			if owner == *orgToNuke {
+				log.Printf("unwatching %s/%s", owner, repoName)
+				_, err := client.Activity.DeleteRepositorySubscription(ctx, owner, repoName)
+				if err != nil {
+					log.Fatal(err)
 				}
 			}
-		} else {
-			log.Fatal(err)
 		}
 	}
 	log.Print("done!")
