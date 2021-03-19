@@ -16,4 +16,4 @@ Create a personal access token on Github:
 Set environment variable GHACCESSTOKEN to your personal access token and export it.
 
 Run the command:
-	ghnuke -org yourorggoeshere
+	ghnuke -org yourorggoeshere -unwatch # add -unstar to also remove stars
