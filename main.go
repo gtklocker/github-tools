@@ -1,11 +1,12 @@
 package main
 
 import (
-	"log"
-	"os"
 	"context"
 	"flag"
-	"github.com/google/go-github/v33/github"
+	"log"
+	"os"
+
+	"github.com/google/go-github/v39/github"
 	"golang.org/x/oauth2"
 )
 
@@ -15,7 +16,7 @@ var unstar = flag.Bool("unstar", false, "whether to unstar all filtered repos")
 
 type shortRepo struct {
 	owner string
-	name string
+	name  string
 }
 
 func toShortRepo(r *github.Repository) *shortRepo {
