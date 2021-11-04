@@ -7,13 +7,31 @@ updates from all its repo. Github does not provide an easy way to unsubscribe
 from all the repos and worst of all the subscriptions for the organization's
 public repos persist even if you leave the organization.
 
-Setup your Go environment, then install with:
-	go install github.com/gtklocker/ghnuke
-
-Create a personal access token on Github:
-	https://github.com/settings/tokens
+[Create a personal access token on Github](https://github.com/settings/tokens)
 
 Set environment variable GHACCESSTOKEN to your personal access token and export it.
 
-Run the command:
-	ghnuke -org yourorggoeshere -unwatch # add -unstar to also remove stars
+```
+go run ./cmd/ghnuke -org yourorggoeshere -unwatch # add -unstar to also remove stars
+```
+
+ghpriv
+======
+
+Go through your least favorite public repos and allows you to:
+- switch to private or
+- delete them or
+- keep them
+
+```
+go run ./cmd/ghpriv
+```
+
+ghunfollow
+==========
+
+Unfollows everyone.
+
+```
+go run ./cmd/ghunfollow
+```
